@@ -1,0 +1,15 @@
+# Never publish a user's firmware, backups, or generated restore packages.
+*.[bB][iI][nN]
+*.[zZ][iI][pP]
+ROMINFO.TXT
+rominfo.txt
+manifest.json
+aira-inspection.json
+fixtures/
+backups/
+install/
+recovery/
+node_modules/
+__pycache__/
+.DS_Store
+Thumbs.db
