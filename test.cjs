@@ -54,6 +54,30 @@ async function main(){
     const moved=Uint8Array.from(source);moved.fill(255,0x140000,0x140100);moved.set(source.subarray(0x140000,0x140100),0x141000);
     const movedResult=await A.prepare(moved,A.INFO,1);
     ok(movedResult.manifest.offset==='0x141010','Validated single record need not occupy first slot');
+    if(process.argv[3]){
+      // Synthetic fixture only: no claim of a captured or flashed 0491 ROM.
+      const official491=fs.readFileSync(process.argv[3]);
+      ok(await A.hash(official491)==='FD1DE67DA2A7123B9A672E4DA012AC7CF355D10974CD9B704A9E738293B030E2','Exact official 0491 input');
+      const synthetic=Uint8Array.from(source);
+      synthetic.set(official491.subarray(0x40000,0x100000),0x40000);
+      const r491=await A.inspect(synthetic,A.INFO);
+      ok(r491.switchable && r491.firmwareBuild==='0491' && r491.warnings.length===1,'0491 enabled with explicit offline-only warning');
+      const expand=(b,o)=>{const v=new DataView(b.buffer,b.byteOffset,b.byteLength);return A.unpack(b.subarray(o+64,o+64+v.getUint32(o+48,true)),v.getUint32(o+60,true));};
+      ok(Buffer.from(expand(official491,0x2000)).equals(Buffer.from(expand(source,0x2000))),'0491 updater identical to captured 0493 updater');
+      ok(Buffer.from(expand(official491,0x40000).subarray(0xd7d6,0xd8b0)).equals(Buffer.from(expand(source,0x40000).subarray(0xd7d6,0xd8b0))),'Product getter/setter implementation identical');
+      for(const target of [1,2,3]){
+        const prepared=await A.prepare(synthetic,A.INFO,target);
+        ok(prepared.manifest.firmwareBuild==='0491' && prepared.manifest.validationWarnings.length===1,'0491 warning retained in manifest');
+        ok(Buffer.from(prepared.candidate.subarray(0,0x140000)).equals(Buffer.from(synthetic.subarray(0,0x140000))),'0491 code preserved');
+        ok(Buffer.from((await A.prepare(prepared.candidate,A.INFO,4)).candidate).equals(Buffer.from(synthetic)),'0491 reverse conversion exact');
+        packageBytes=A.archive(prepared);
+      }
+      const damaged=Uint8Array.from(synthetic);damaged[0x40040]^=1;
+      ok(!(await A.inspect(damaged,A.INFO)).switchable,'Corrupt 0491 blocked');
+      const wrongBoot=Uint8Array.from(synthetic);wrongBoot[0]^=1;
+      ok(!(await A.inspect(wrongBoot,A.INFO)).switchable,'Unknown 0491 boot blocked');
+      await rejected(()=>A.prepare(synthetic,'0320,0320,4096\r\n',2),/ROMINFO/);
+    }
   } else console.log('No private fixture directory supplied: real-ROM integration tests skipped.');
   // Independent ZIP implementation validates central directory, CRCs and contents.
   const script="import io,sys,zipfile,json; z=zipfile.ZipFile(io.BytesIO(sys.stdin.buffer.read())); assert z.testzip() is None; names=z.namelist(); assert len(names)==len(set(names));\nif 'manifest.json' in names:\n m=json.loads(z.read('manifest.json')); a=z.read('install/AIRA_MODULAR_ROM.BIN'); b=z.read('recovery/AIRA_MODULAR_ROM.BIN'); assert len(a)==2097152 and len(b)==2097152; assert sum(x!=y for x,y in zip(a,b))==1; assert z.read('install/ROMINFO.TXT')==b'0000,0495,4096\\r\\n'; import hashlib; assert hashlib.sha256(a).hexdigest().upper()==m['candidateSha256']; assert hashlib.sha256(b).hexdigest().upper()==m['sourceSha256']\nprint('Independent ZIP extraction and CRC check passed')";

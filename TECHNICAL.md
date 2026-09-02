@@ -24,11 +24,13 @@ Conversion is enabled only for:
 
 - a 2 MiB full-ROM backup, not a vendor updater file or USERAREA backup;
 - the validated boot and updater code fingerprints;
-- application build 0493's validated decompressed fingerprint;
+- application build 0491 or 0493's exact known decompressed fingerprint;
 - original `ROMINFO.TXT` equal to `0000,0495,4096` followed by CRLF;
 - exactly one complete Product record matching the validated layout anywhere in the two-sector Product span.
 
-Build 0491 is recognized but remains inspection-only. Unknown builds, altered code, torn records, multiple-record histories, unusual metadata, and potential sequence wraparound are blocked. There is deliberately no force button. To add a profile, independently analyze that build's parser, range semantics, Product validation and boot behavior, then add positive and negative tests. A version string alone is not sufficient.
+Build 0491 supports experimental package generation, not a claim of hardware validation. Its updater is byte-identical after decompression to the captured 0493 updater, and application bytes `[0xD7D6, 0xD8B0)` containing the Product getter/setter implementation are identical. Tests combine the exact official 0491 application record with a captured 0493 ROM **in memory only**: this synthetic fixture is not a real 0491 backup. Tests cover model conversion, exact reverse conversion, unchanged code, corruption rejection, and warning propagation. No 0491 hardware restore or backup capture has been verified. A build-specific warning is shown before download and included in the manifest and archive instructions. Firmware version and existing bugs are preserved.
+
+Unknown builds, altered code, torn records, multiple-record histories, unusual metadata, and potential sequence wraparound are blocked. There is deliberately no force button. A version string alone is not sufficient.
 
 All four personalities and a return to Scooper were observed on **one Scooper running 1.05 build 0493**. Other hardware units, including native Bitrazer/Demora/Torcido units, are not independently validated. A compatible-file result does not establish universal hardware safety.
 
@@ -60,6 +62,8 @@ node test.cjs
 ```
 
 Private integration fixtures can be supplied as `node test.cjs /path/to/research/outputs`. The optional tests compare generated packages against all four captured ROMs, exercise reverse conversion, and verify preservation of other data. These tests read files outside this project; never commit them. ZIPs are checked in memory by Python's independent `zipfile` implementation. `PYTHON` may specify the Python executable.
+
+To run the additional synthetic 0491 tests, append the path to the official build-0491 updater as a second argument. The test verifies its exact SHA-256 before use. Firmware is never written to disk by these tests or included in the repository.
 
 Native file controls, radio buttons, keyboard focus indicators, labeled inputs, live status announcements, a skip link, responsive layout, and forced-colors borders are provided. Browser visual QA and assistive-technology testing are not yet performed.
 

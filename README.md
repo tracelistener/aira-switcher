@@ -8,6 +8,18 @@ Nothing to install. Your files stay in your browser.
 
 ## Use it
 
+### Make your backup first
+
+1. Disconnect USB and turn the unit off.
+2. Hold **GRF 6** while powering on, then release it.
+3. Press **GRF 5 ten times**, then connect USB.
+4. Open **AIRAMODULAR → BACKUP**. Copy `AIRA_MODULAR_ROM.BIN` and `ROMINFO.TXT` to your computer and keep them safe.
+5. Safely eject and disconnect USB. Restart normally when finished.
+
+This undocumented sequence was observed on our 0493 Scooper. The 0491 updater code is identical, but backup capture on 0491 has not been hardware-verified. If BACKUP does not appear, stop; do not start an update or substitute factory reset.
+
+### Choose your model
+
 1. Select your unit’s `AIRA_MODULAR_ROM.BIN` and `ROMINFO.TXT` backup files.
 2. Choose a model.
 3. Download the ZIP, extract it, and follow the tool’s installation instructions.
@@ -16,7 +28,9 @@ Copy only the two files inside `install/` to the AIRAMODULAR drive. Safely eject
 
 ## Before you start
 
-- Experimental: tested on **one Scooper with firmware 1.05 build 0493**. Other units are not independently verified; unsupported firmware is blocked.
+- **v1.05 build 0493:** tested on one Scooper.
+- **v1.05 build 0491:** experimental package generation supported with exact code/layout checks. Offline-tested using a synthetic in-memory fixture, **not a captured 0491 backup or hardware restore**. The tool shows a specific warning before download.
+- Other units are not independently verified; unknown firmware is blocked. The tool preserves the input build, including any existing bugs.
 - Use a backup from the **same physical unit**. Firmware and personal backups are not included here.
 - Restoring rewrites boot code and saved settings. A power failure can require hardware repair.
 - Saved patches are preserved. Initialize the selected model in Customizer if needed.

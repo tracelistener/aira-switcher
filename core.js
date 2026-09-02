@@ -83,8 +83,9 @@
     catch(e){report.reasons.push(e.message);}
     if(report.bootSha256!==KNOWN.boot) report.reasons.push('Boot code has not been validated.');
     if(report.updater?.sha256!==KNOWN.updater) report.reasons.push('Updater code has not been validated.');
-    if(report.application?.sha256!==KNOWN.app493) report.reasons.push(report.application?.sha256===KNOWN.app491
-      ? 'Build 0491 is recognized, but conversion has only been tested on 0493.' : 'Application code has not been validated.');
+    report.firmwareBuild=report.application?.sha256===KNOWN.app491?'0491':report.application?.sha256===KNOWN.app493?'0493':null;
+    if(!report.firmwareBuild) report.reasons.push('Application code has not been validated.');
+    report.warnings=report.firmwareBuild==='0491'?['Build 0491: experimental, offline-tested package generation only. No 0491 hardware restore or backup capture has been verified.']:[];
     if(infoText!==INFO) report.reasons.push('Select the original ROMINFO.TXT: expected native range 0000,0495,4096 with CRLF. No range is guessed.');
     report.switchable=report.reasons.length===0;
     report.evidence='All four personalities tested on one Scooper, build 0493. Other physical units are not independently validated.';
@@ -105,7 +106,7 @@
     if(!after.switchable || after.currentProduct!==target) throw new Error('Candidate failed reinspection.');
     return {original,candidate,manifest:{toolVersion:'0.1.0',from:before.currentModel,to:MODELS[target],
       sourceSha256:before.sha256,candidateSha256:after.sha256,changedBytes:1,offset:hex(offset),
-      oldValue:before.currentProduct,newValue:target,restoreRange:before.restoreRange,
+      oldValue:before.currentProduct,newValue:target,restoreRange:before.restoreRange,firmwareBuild:before.firmwareBuild,validationWarnings:before.warnings,
       warning:'Experimental; rewrites boot code. Same physical unit only. Preserves supplied patch data; does not initialize defaults. Recovery after a failure is not guaranteed.'}};
   }
   function crc32(bytes) {
@@ -130,9 +131,10 @@
   }
   function archive(result) {
     const note=`AIRA personality switch — experimental\r\nTarget: ${result.manifest.to}\r\n\r\nKeep this archive and your untouched backup. Same physical unit only.\r\nUnzip on the computer, not on AIRAMODULAR.\r\nCopy ONLY the two files INSIDE install/ to the updater drive root.\r\nNever copy install/ and recovery/ together or the ZIP itself.\r\nSafely eject before unplugging USB. Use stable power.\r\nThis restores 496 sectors, including boot code. Power loss can require hardware repair.\r\nIf expected updater indicators differ, stop; do not repeatedly press buttons.\r\nAfter normal reboot, verify identity, then initialize the selected model in Customizer if needed.\r\nrecovery/ contains the exact input ROM, not a guaranteed recovery from boot failure.\r\nFirmware version and saved patches are NOT changed to factory defaults.\r\nSource SHA256: ${result.manifest.sourceSha256}\r\nTarget SHA256: ${result.manifest.candidateSha256}\r\n`;
+    const validationNote='Firmware build: '+result.manifest.firmwareBuild+'\r\n'+(result.manifest.validationWarnings||[]).join('\r\n')+'\r\n\r\n';
     return zip([['install/AIRA_MODULAR_ROM.BIN',result.candidate],['install/ROMINFO.TXT',INFO],
       ['recovery/AIRA_MODULAR_ROM.BIN',result.original],['recovery/ROMINFO.TXT',INFO],
-      ['manifest.json',JSON.stringify(result.manifest,null,2)+'\n'],['READ-ME-FIRST.txt',note]]);
+      ['manifest.json',JSON.stringify(result.manifest,null,2)+'\n'],['READ-ME-FIRST.txt',validationNote+note]]);
   }
   const api=Object.freeze({MODELS,INFO,KNOWN,hash,unpack,inspect,prepare,archive,zip,crc32});
   if(typeof module!=='undefined' && module.exports) module.exports=api;

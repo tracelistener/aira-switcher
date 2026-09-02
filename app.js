@@ -25,7 +25,8 @@ async function inspectFiles(){
     message('report',JSON.stringify(report,null,2));el('targets').disabled=!report.switchable;el('risk').disabled=!report.switchable;
     el('choose-step').hidden=!report.switchable;
     document.querySelectorAll('[name=target]').forEach(x=>{x.disabled=Number(x.value)===report.currentProduct;});
-    message('status',report.switchable?'Backup checked. Choose a model below.':report.reasons.join(' '));
+    message('status',report.switchable?(report.warnings.length?report.warnings.join(' '):'Backup checked. Choose a model below.'):report.reasons.join(' '));
+    message('risk-label',report.firmwareBuild==='0491'?'I have kept my original backup and understand that build 0491 restoration has not been hardware-tested, and may require hardware repair if it fails.':'I have kept my original backup and understand the risk.');
     message('package-status',report.switchable?'No files prepared or written to the device.':'Download disabled: compatibility checks did not pass.');
   }catch(e){if(ticket===generation)message('status',e.message);}
   finally{if(ticket===generation){busy=false;sync();}}
