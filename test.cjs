@@ -61,13 +61,13 @@ async function main(){
       const synthetic=Uint8Array.from(source);
       synthetic.set(official491.subarray(0x40000,0x100000),0x40000);
       const r491=await A.inspect(synthetic,A.INFO);
-      ok(r491.switchable && r491.firmwareBuild==='0491' && r491.warnings.length===1,'0491 enabled with explicit offline-only warning');
+      ok(r491.switchable && r491.firmwareBuild==='0491' && r491.warnings.length===0 && r491.evidence.includes('reported working'),'0491 supported with attributed owner report');
       const expand=(b,o)=>{const v=new DataView(b.buffer,b.byteOffset,b.byteLength);return A.unpack(b.subarray(o+64,o+64+v.getUint32(o+48,true)),v.getUint32(o+60,true));};
       ok(Buffer.from(expand(official491,0x2000)).equals(Buffer.from(expand(source,0x2000))),'0491 updater identical to captured 0493 updater');
       ok(Buffer.from(expand(official491,0x40000).subarray(0xd7d6,0xd8b0)).equals(Buffer.from(expand(source,0x40000).subarray(0xd7d6,0xd8b0))),'Product getter/setter implementation identical');
       for(const target of [1,2,3]){
         const prepared=await A.prepare(synthetic,A.INFO,target);
-        ok(prepared.manifest.firmwareBuild==='0491' && prepared.manifest.validationWarnings.length===1,'0491 warning retained in manifest');
+        ok(prepared.manifest.firmwareBuild==='0491' && prepared.manifest.validationWarnings.length===0,'0491 build retained in manifest');
         ok(Buffer.from(prepared.candidate.subarray(0,0x140000)).equals(Buffer.from(synthetic.subarray(0,0x140000))),'0491 code preserved');
         ok(Buffer.from((await A.prepare(prepared.candidate,A.INFO,4)).candidate).equals(Buffer.from(synthetic)),'0491 reverse conversion exact');
         packageBytes=A.archive(prepared);

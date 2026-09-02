@@ -85,10 +85,10 @@
     if(report.updater?.sha256!==KNOWN.updater) report.reasons.push('Updater code has not been validated.');
     report.firmwareBuild=report.application?.sha256===KNOWN.app491?'0491':report.application?.sha256===KNOWN.app493?'0493':null;
     if(!report.firmwareBuild) report.reasons.push('Application code has not been validated.');
-    report.warnings=report.firmwareBuild==='0491'?['Build 0491: experimental, offline-tested package generation only. No 0491 hardware restore or backup capture has been verified.']:[];
+    report.warnings=[];
     if(infoText!==INFO) report.reasons.push('Select the original ROMINFO.TXT: expected native range 0000,0495,4096 with CRLF. No range is guessed.');
     report.switchable=report.reasons.length===0;
-    report.evidence='All four personalities tested on one Scooper, build 0493. Other physical units are not independently validated.';
+    report.evidence='All four personalities tested on one Scooper, build 0493. Build 0491 reported working by the project owner. Other physical units are not independently validated.';
     report.restoreRange={start:'0x000000',endExclusive:'0x1F0000',sectors:496,includesBootCode:true};
     return report;
   }

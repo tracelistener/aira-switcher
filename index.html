@@ -21,8 +21,8 @@
       <li>Connect USB. Open the <strong>AIRAMODULAR</strong> drive, then its <strong>BACKUP</strong> folder.</li>
       <li>Copy <strong>AIRA_MODULAR_ROM.BIN</strong> and <strong>ROMINFO.TXT</strong> to a safe folder on your computer. Keep this original pair untouched.</li>
       <li>Safely eject the drive and disconnect USB. Restart normally when finished. Select your saved copies below.</li>
-    </ol><p>This undocumented backup sequence was tested on our Scooper running 0493. Build 0491 has the same updater code, but the sequence has not been hardware-verified on 0491. If BACKUP does not appear, stop and ask for help. Do not copy update files or start a restore just to make a backup.</p></details>
-    <p class="muted">v1.05: <strong>0493</strong> tested on one Scooper; <strong>0491</strong> experimental, offline-tested only.</p>
+    </ol><p>If BACKUP does not appear, stop and ask for help. Do not copy update files or start a restore just to make a backup.</p></details>
+    <p class="muted">Supports v1.05 builds <strong>0491</strong> and <strong>0493</strong>.</p>
     <div class="files"><label for="rom">Full-ROM backup <small>AIRA_MODULAR_ROM.BIN · 2 MiB</small><input id="rom" type="file" accept=".bin" aria-describedby="backup-help"></label><label for="info">Original restore metadata <small>ROMINFO.TXT · from the same backup</small><input id="info" type="file" accept=".txt"></label></div>
     <p id="backup-help" class="muted">An official *_UPD.BIN update or USERAREA.BIN is not a full-ROM backup.</p>
     <div class="actions"><button id="clear" class="secondary" type="button">Start over</button></div>
@@ -52,7 +52,7 @@
       <li>Initialize the selected model in Customizer as needed. Test at low volume. A new full-ROM backup allows byte comparison with the package.</li>
     </ol><p>The recovery package restores this input snapshot, including its saved patches. It cannot guarantee recovery if the bootloader is damaged.</p></details>
   </section>
-  <details class="about"><summary>Compatibility details</summary><p>Requires known boot/updater code, an exact build-0491 or build-0493 application fingerprint, native ROMINFO range, and one unambiguous Product record. Unknown builds and ambiguous record histories are blocked.</p><p>0493: four personalities and a return to Scooper tested on <strong>one Scooper</strong>. 0491: shared updater and Product getter/setter code checked offline; package tests use a synthetic in-memory fixture, not a captured 0491 backup. No 0491 hardware restore is verified. Other units are not independently validated. The tool preserves your firmware version; it does not upgrade 0491 to 0493 or fix its bugs.</p></details>
+  <details class="about"><summary>Compatibility details</summary><p>Requires known boot/updater code, an exact build-0491 or build-0493 application fingerprint, native ROMINFO range, and one unambiguous Product record. Unknown builds and ambiguous record histories are blocked.</p><p>0493: four personalities and a return to Scooper tested on <strong>one Scooper</strong>. 0491: reported working by the project owner, with additional offline package tests. Other units are not independently validated. The tool preserves your firmware version; it does not upgrade 0491 to 0493 or fix its bugs.</p></details>
 </main><footer>Unofficial research utility · No Roland affiliation · No ROMs bundled · No automatic device writes</footer>
 <noscript>This tool needs JavaScript for local file validation. Nothing will be uploaded.</noscript>
 </body></html>
