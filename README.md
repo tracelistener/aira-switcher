@@ -1,72 +1,28 @@
-# AIRA Personality Switcher
+# AIRA Switcher
 
-A small, accessible, dependency-free HTML/JavaScript utility for **local full-ROM inspection** and **experimental personality restore-package preparation**. No firmware, personal backups, or calibration data are bundled. No server, telemetry, account, automatic USB writes, or remote firmware downloads.
+Switch between **Bitrazer, Demora, Torcido and Scooper** using your own AIRA backup.
 
-This changes a stored Product value within the input firmware. It does **not** install a different version or add new DSP code.
+## [Open the browser tool](https://tracelistener.github.io/aira-switcher/)
 
-## Open it
+Nothing to install. Your files stay in your browser.
 
-Keep `index.html`, `style.css`, `core.js`, and `app.js` together. Open `index.html` in a modern browser. If SHA-256 is unavailable in the local-file context, serve this folder on localhost (for example `python -m http.server 8765 --bind 127.0.0.1`) and visit `http://127.0.0.1:8765`. HTTPS static hosting such as GitHub Pages is also possible; ROM processing remains in the browser.
+## Use it
 
-1. Select your own `AIRA_MODULAR_ROM.BIN` and its original `ROMINFO.TXT`.
-2. Both files are checked automatically. Review the detected model; the optional Technical details section contains compatibility and SHA-256 information. The model selector appears only when validation passes.
-3. Choose a different personality and acknowledge the risk.
-4. Download and extract the ZIP **on the computer**, never directly on the updater drive.
-5. Read `READ-ME-FIRST.txt`. Only the two files inside `install/` belong at the updater drive root. Keep `recovery/` and the archive off the device. Never stage both packages together.
+1. Select your unit’s `AIRA_MODULAR_ROM.BIN` and `ROMINFO.TXT` backup files.
+2. Choose a model.
+3. Download the ZIP, extract it, and follow the tool’s installation instructions.
 
-The UI includes the observed manual restore workflow. It cannot confirm the connected device, cable state, successful eject, LEDs, power stability, or an actual flash. A generated ZIP is not a successful conversion.
+Copy only the two files inside `install/` to the AIRAMODULAR drive. Safely eject, disconnect USB, and press GRF6 when prompted by the unit. **Keep power connected until restoration finishes.** Keep the original backup and `recovery/` files on your computer.
 
-## Compatibility: not universal
+## Before you start
 
-The inspector accepts arbitrary inputs within its file-size limit, identifies the known full-ROM container, validates record boundaries, compressed checksums, decompression, code fingerprints, and Product metadata. It does **not** depend on an individual owner's complete ROM hash. Different patch/configuration bytes outside code and Product metadata are preserved from the input.
+- Experimental: tested on **one Scooper with firmware 1.05 build 0493**. Other units are not independently verified; unsupported firmware is blocked.
+- Use a backup from the **same physical unit**. Firmware and personal backups are not included here.
+- Restoring rewrites boot code and saved settings. A power failure can require hardware repair.
+- Saved patches are preserved. Initialize the selected model in Customizer if needed.
 
-Conversion is enabled only for:
+Unlike the Circuit uploader, this tool **does not send firmware over MIDI**. It prepares files for the tested USB-drive restore procedure. Single-update BIN support is not yet tested or enabled.
 
-- a 2 MiB full-ROM backup, not a vendor updater file or USERAREA backup;
-- the validated boot and updater code fingerprints;
-- application build 0493's validated decompressed fingerprint;
-- original `ROMINFO.TXT` equal to `0000,0495,4096` followed by CRLF;
-- exactly one complete Product record matching the validated layout anywhere in the two-sector Product span.
+Need to make a backup, check compatibility, or inspect the code? See [technical documentation](TECHNICAL.md).
 
-Build 0491 is recognized but remains inspection-only. Unknown builds, altered code, torn records, multiple-record histories, unusual metadata, and potential sequence wraparound are blocked. There is deliberately no force button. To add a profile, independently analyze that build's parser, range semantics, Product validation and boot behavior, then add positive and negative tests. A version string alone is not sufficient.
-
-All four personalities and a return to Scooper were observed on **one Scooper running 1.05 build 0493**. Other hardware units, including native Bitrazer/Demora/Torcido units, are not independently validated. A compatible-file result does not establish universal hardware safety.
-
-## Risk and preservation
-
-- The candidate changes exactly one byte: the Product value (1 Bitrazer, 2 Demora, 3 Torcido, 4 Scooper).
-- The restore still erases/programs **496 sectors, including boot code**, covering `[0, 0x1F0000)`. The last 64 KiB of the physical device are not restored by this metadata.
-- Power interruption can require hardware repair. A backup does not guarantee recovery if boot code is damaged.
-- Use a fresh backup from the **same physical unit** only. Never apply someone else's full ROM. This utility does not verify hardware ownership or identity.
-- Patches and calibration/configuration bytes in the input image are left unchanged. The restore reinstates the input snapshot within its range, not any newer device changes. This is not a promise that analog behavior is identical across personalities.
-- The recovery folder holds the exact input image, not factory firmware. Restoration can overwrite more recent settings. The excluded final 64 KiB remain as they are on the device.
-- This utility does **not** initialize model defaults. Initialize the chosen model in Customizer if required, then keep a separate fresh backup to preserve that initialized snapshot.
-- Verify MIDI identity, full-ROM readback and low-volume audio behavior after any restore. LED patterns alone do not prove success.
-
-The former `0320,0320,4096` Product-only approach is **not supported**: the ordinary updater validates a code signature at a nonzero restore start, so a Product-record-only range is rejected. Do not bypass those checks.
-
-## Backup gesture observed on the test unit
-
-With USB disconnected, hold GRF6 at power-on and release it. Press GRF5 ten times **before** connecting USB. The enumerated drive exposed `BACKUP/AIRA_MODULAR_ROM.BIN` and `BACKUP/ROMINFO.TXT`. Copy both to the computer. This is an undocumented gesture observed on the tested updater, not a universal instruction for unknown firmware. Do not substitute a factory reset or experiment with button chords blindly.
-
-## Development and tests
-
-No install or build step. Node.js 20+ and Python 3 are used only for tests:
-
-```sh
-node --check core.js
-node --check app.js
-node test.cjs
-```
-
-Private integration fixtures can be supplied as `node test.cjs /path/to/research/outputs`. The optional tests compare generated packages against all four captured ROMs, exercise reverse conversion, and verify preservation of other data. These tests read files outside this project; never commit them. ZIPs are checked in memory by Python's independent `zipfile` implementation. `PYTHON` may specify the Python executable.
-
-Native file controls, radio buttons, keyboard focus indicators, labeled inputs, live status announcements, a skip link, responsive layout, and forced-colors borders are provided. Browser visual QA and assistive-technology testing are not yet performed.
-
-An optional read-only WebMCP inspection-report tool is feature-detected. It exposes no file selection, package generation, or hardware operation. Its browser integration is not yet verified.
-
-## GitHub publishing
-
-This repository contains **only the tool source**, never the surrounding research workspace. `.gitignore` excludes ROMs, ZIPs, generated manifests, and restore metadata. Do not attach firmware or personal backups to issues or pull requests. This is not a public firmware distribution.
-
-No affiliation with or endorsement by Roland. Firmware rights remain with their owners. This repository does not grant rights to redistribute firmware. No source-code license has been selected yet.
+Unofficial project; not affiliated with Roland. No source-code license has been selected. Do not upload firmware or personal backups to this repository.
