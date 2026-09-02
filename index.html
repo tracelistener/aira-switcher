@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Private, offline AIRA full-ROM inspection and experimental personality package preparation. No firmware included.">
+  <title>AIRA Personality Switcher</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="core.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to switcher</a>
+<header><span class="eyebrow">OFFLINE · EXPERIMENTAL</span><h1>AIRA <span>Switcher</span></h1><p>Load your backup. Choose a model. Download your files.</p></header>
+<main id="main">
+  <section aria-labelledby="load-heading"><h2 id="load-heading"><span class="step">1</span> Load your backup</h2><p>Select both files from your unit’s backup. Nothing is uploaded.</p>
+    <div class="files"><label for="rom">Full-ROM backup <small>AIRA_MODULAR_ROM.BIN · 2 MiB</small><input id="rom" type="file" accept=".bin" aria-describedby="backup-help"></label><label for="info">Original restore metadata <small>ROMINFO.TXT · from the same backup</small><input id="info" type="file" accept=".txt"></label></div>
+    <p id="backup-help" class="muted">An official *_UPD.BIN update or USERAREA.BIN is not a full-ROM backup.</p>
+    <div class="actions"><button id="clear" class="secondary" type="button">Start over</button></div>
+    <p id="status" role="status" aria-live="polite">Files are checked automatically when both are selected.</p>
+    <div id="results" hidden><p class="detected">Backup model: <strong id="current">—</strong></p><details><summary>Technical details</summary><dl><div><dt>Firmware build</dt><dd id="build">—</dd></div><div><dt>Compatibility</dt><dd id="compat">—</dd></div></dl><pre id="report"></pre><button id="report-download" class="secondary" type="button">Download report</button></details></div>
+  </section>
+  <section id="choose-step" hidden aria-labelledby="target-heading"><h2 id="target-heading"><span class="step">2</span> Choose a model</h2>
+    <fieldset id="targets" disabled><legend>Target model</legend><div class="models">
+      <label><input type="radio" name="target" value="1"><span><strong>BITRAZER</strong><small>Bit &amp; sample-rate reduction</small></span></label>
+      <label><input type="radio" name="target" value="2"><span><strong>DEMORA</strong><small>Delay</small></span></label>
+      <label><input type="radio" name="target" value="3"><span><strong>TORCIDO</strong><small>Distortion</small></span></label>
+      <label><input type="radio" name="target" value="4"><span><strong>SCOOPER</strong><small>Looper &amp; scatter</small></span></label>
+    </div></fieldset>
+    <p class="muted">Your current model is greyed out. Saved patches stay unchanged; initialize in Customizer after switching if needed.</p>
+  </section>
+  <section id="download-step" hidden aria-labelledby="download-heading"><h2 id="download-heading"><span class="step">3</span> Download</h2>
+    <aside class="warning" aria-label="Important safety information"><strong>Only restore to the unit this backup came from.</strong><p>Restoring rewrites boot code. A power interruption can require hardware repair. Compatibility is not guaranteed for every unit or firmware.</p></aside>
+    <label class="check"><input id="risk" type="checkbox" disabled><span>I have kept my original backup and understand the risk.</span></label>
+    <button id="download" type="button" disabled>Download restore ZIP</button><p id="package-status" role="status" aria-live="polite">Your original backup is included for recovery. This tool does not flash the unit.</p>
+    <details id="install-help"><summary>How to install on your unit</summary><ol>
+      <li>Extract it on your computer. Keep the ZIP and <code>recovery/</code> safely off the unit.</li>
+      <li>Stop playback and mute monitoring. Disconnect USB, power off, then hold GRF6 while powering on. Release it and connect USB.</li>
+      <li>Confirm the AIRAMODULAR drive and VERSION.TXT. With no conflicting update/ROM files, copy <strong>only the two files inside <code>install/</code></strong> to the drive root. Do not copy the ZIP, both folders, or extra firmware files.</li>
+      <li>Safely eject. If Windows says “in use,” close files and retry; do not force-eject. Disconnect USB only after successful eject.</li>
+      <li>When the center is light blue and GRF6 flashes, press GRF6 once. Keep power on throughout. If the indicators differ, stop and seek help.</li>
+      <li>Expected completion on the tested unit: blue center and both GRF buttons flashing together. Then power-cycle normally and verify personality. Lights alone are not proof of a correct flash.</li>
+      <li>Initialize the selected model in Customizer as needed. Test at low volume. A new full-ROM backup allows byte comparison with the package.</li>
+    </ol><p>The recovery package restores this input snapshot, including its saved patches. It cannot guarantee recovery if the bootloader is damaged.</p></details>
+  </section>
+  <details class="about"><summary>Compatibility &amp; making a backup</summary><p>Conversion currently requires the validated boot/updater code, build-0493 application fingerprint, native ROMINFO range, and one unambiguous Product record. It does not require one owner’s complete ROM hash. Unknown builds and ambiguous record histories are inspection-only. Build 0491 is recognized but not enabled for conversion.</p><p>Evidence: four personalities and a return to Scooper tested on <strong>one Scooper</strong>. A matching layout on another unit is not independent hardware validation.</p><p>Hidden full-ROM backup gesture observed on that unit: disconnect USB; hold GRF6 at power-on, release; press GRF5 ten times before connecting USB. Copy both files from <code>BACKUP/</code> to your computer. This gesture is not established for every firmware. Never substitute factory reset.</p></details>
+</main><footer>Unofficial research utility · No Roland affiliation · No ROMs bundled · No automatic device writes</footer>
+<noscript>This tool needs JavaScript for local file validation. Nothing will be uploaded.</noscript>
+</body></html>
