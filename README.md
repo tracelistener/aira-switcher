@@ -35,8 +35,6 @@ Copy only the two files inside `install/` to the AIRAMODULAR drive. Safely eject
 - Restoring rewrites boot code and saved settings. A power failure can require hardware repair.
 - Saved patches are preserved. Initialize the selected model in Customizer if needed.
 
-Unlike the Circuit uploader, this tool **does not send firmware over MIDI**. It prepares files for the tested USB-drive restore procedure. Single-update BIN support is not yet tested or enabled.
-
 Need to make a backup, check compatibility, or inspect the code? See [technical documentation](TECHNICAL.md).
 
 Unofficial project; not affiliated with Roland. No source-code license has been selected. Do not upload firmware or personal backups to this repository.
