@@ -35,6 +35,15 @@ Copy only the two files inside `install/` to the AIRAMODULAR drive. Safely eject
 - Restoring rewrites boot code and saved settings. A power failure can require hardware repair.
 - Saved patches are preserved. Initialize the selected model in Customizer if needed.
 
+## No REC/PLAY button after switching to Scooper?
+
+Bitrazer, Demora and Torcido panels have no REC/PLAY button, so a unit switched to Scooper can't start or stop the looper from its panel. The experimental **v3.5** firmware in [aira-modular-system-osc](https://github.com/tracelistener/aira-modular-system-osc#experimental-recplay-from-the-grf-6-jack-v35) makes a gate into **GRF 6** work as REC/PLAY. A short gate records or plays; a gate held for about 3.5 s deletes the loop.
+
+- Switch first, then install v3.5 as a normal firmware update. This tool only accepts stock firmware.
+- Switching again later restores your original backup, which puts the stock firmware back.
+- v3.5 also replaces the FORMANT FILTER module with SYSTEM OSCILLATOR; its README covers the matching Customizer files.
+- v3.5 has only been tested on a real Scooper. Its GRF 6 levels haven't been checked on Bitrazer, Demora or Torcido hardware.
+
 Need to make a backup, check compatibility, or inspect the code? See [technical documentation](TECHNICAL.md).
 
 Unofficial project; not affiliated with Roland. No source-code license has been selected. Do not upload firmware or personal backups to this repository.
